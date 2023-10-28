@@ -1,11 +1,8 @@
 <p align="center">
- <img src="https://ada-strapi-production.s3.sa-east-1.amazonaws.com/vemsertech_dfea8bab1c.svg" alt="Vem ser tech | Ada & iFood logo">
-</p>
-<p align="center">
- <img src="https://ada-strapi-production.s3.sa-east-1.amazonaws.com/Regua_i_Food_d513d7fc49.svg" alt="Vem ser tech | Ada & iFood logo">
+ <img src="https://media.licdn.com/dms/image/D4D05AQFaM51ZK3sqVg/feedshare-thumbnail_720_1280/0/1687874420677?e=2147483647&v=beta&t=JSxHNhvoEh4T8vGsBPtrgWusiMtlXuaBsdnlciBVKZQ" alt="Vem ser tech | Ada & iFood logo">
 </p>
 
-<h1 align="center">Vem ser tech | Ada & iFood</h1>
+<h1 align="center">Vem Ser Tech - Front End | Ada & iFood</h1>
 
 ---
 
