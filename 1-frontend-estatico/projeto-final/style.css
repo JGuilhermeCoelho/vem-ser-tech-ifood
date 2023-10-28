@@ -1,0 +1,59 @@
+.navbar-nav li {
+  margin-right: 20px;
+}
+.navbar-nav li a {
+  font-size: 20px;
+}
+
+.navbar-collapse {
+  display: block !important;
+}
+
+@media (max-width: 990px) {
+  .navbar-nav {
+    display: flex;
+    align-items: center;
+  }
+}
+
+header a img {
+  width: 100%;
+}
+
+table {
+  border: 1px solid black;
+  margin: 10px 0;
+  padding: 10px;
+}
+
+th {
+  background-color: #ccc;
+  padding: 5px;
+}
+
+td {
+  text-align: center;
+  padding: 5px;
+}
+
+footer a img {
+  width: 30px;
+  
+}
+footer{
+  background-color: red;
+}
+
+.card-body {
+  height: 190px;
+  width: 200px;
+  margin-bottom: 10px;
+}
+
+.mb-24 {
+  margin-bottom: 24px;
+}
+
+.mt-24 {
+  margin-top: 24px;
+}
