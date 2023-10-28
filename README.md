@@ -4,8 +4,6 @@
 
 <h1 align="center">Vem Ser Tech - Front End | Ada & iFood</h1>
 
----
-
 ## 📝 Módulos
 
 - [1. Front-End Estático](/1-frontend-estatico/)
