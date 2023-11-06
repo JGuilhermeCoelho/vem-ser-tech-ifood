@@ -7,4 +7,4 @@
 ## 📝 Módulos
 
 - [1. Front-End Estático](/1-frontend-estatico/)
-  - [Projeto final (Proposta de site para o iFood)](/1-frontend-estatico/projeto-final/)
+  - [Projeto final (Proposta de site para o iFood)](/1-frontend-estatico/projeto-final/) / [Acesse o projeto aqui](https://jguilhermecoelho.github.io/vem-ser-tech-ifood/1-frontend-estatico/projeto-final/index.html)
