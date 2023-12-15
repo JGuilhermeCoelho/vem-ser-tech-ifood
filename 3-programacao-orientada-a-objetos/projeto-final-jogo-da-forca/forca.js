@@ -113,12 +113,11 @@ class UserInterface {
 
 class GameController {
   constructor() {
-    this._player = null
+    this._player = new Player('Jogador1')
     this._match = null
   }
 
-  startNewGame(word, hint, playerName) {
-    this._player = new Player(playerName)
+  startNewGame(word, hint) {
     this._match = new Match(word, hint)
   }
 
@@ -129,9 +128,20 @@ class GameController {
     const hint = await UserInterface.askQuestion(
       'Digite a dica para a palavra: '
     )
-    this.startNewGame(word, hint, 'Jogador1')
+    this.startNewGame(word, hint)
     this.displayGameStatus()
     this.askForAction()
+  }
+
+  async restartGame() {
+    const playAgain = await UserInterface.askQuestion(
+      'Você quer jogar novamente? (s/n): '
+    )
+    if (playAgain.toLowerCase() === 's') {
+      await this.askForWordAndHint()
+    } else {
+      console.log('Obrigado por jogar! Até a próxima.')
+    }
   }
 
   nextStep() {
@@ -142,6 +152,7 @@ class GameController {
         ? 'Você ganhou!'
         : 'Você perdeu!'
       console.log(`${message} Fim do jogo!`)
+      this.restartGame() // Adicione esta linha
     }
   }
 
