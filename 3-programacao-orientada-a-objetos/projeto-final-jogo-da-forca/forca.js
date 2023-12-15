@@ -1,18 +1,20 @@
 const readline = require('readline')
 
+const MAX_ATTEMPTS = 6
+
 class Match {
   constructor(word, hint) {
-    this.word = word.toLowerCase()
-    this.hint = hint
-    this.guessedLetters = new Set()
-    this.maxAttempts = 6
-    this.attemptsLeft = this.maxAttempts
+    this._word = word.toLowerCase()
+    this._hint = hint
+    this._guessedLetters = new Set()
+    this._maxAttempts = MAX_ATTEMPTS
+    this._attemptsLeft = this._maxAttempts
   }
 
   displayProgress() {
     let displayWord = ''
-    for (const char of this.word) {
-      if (this.guessedLetters.has(char)) {
+    for (const char of this._word) {
+      if (this._guessedLetters.has(char)) {
         displayWord += char + ' '
       } else {
         displayWord += '_ '
@@ -24,109 +26,119 @@ class Match {
   guess(letter) {
     letter = letter.toLowerCase()
     if (!this.isGameOver()) {
-      if (!this.guessedLetters.has(letter)) {
-        this.guessedLetters.add(letter)
-        if (!this.word.includes(letter)) {
-          this.attemptsLeft--
+      if (!this._guessedLetters.has(letter)) {
+        this._guessedLetters.add(letter)
+        if (!this._word.includes(letter)) {
+          this._attemptsLeft--
         }
       }
     }
   }
 
   isGameOver() {
-    return this.isWordGuessed() || this.attemptsLeft === 0
+    return this.isWordGuessed() || this._attemptsLeft === 0
   }
 
   isWordGuessed() {
-    for (const char of this.word) {
-      if (!this.guessedLetters.has(char)) {
-        return false
-      }
-    }
-    return true
+    return [...this._word].every((char) => this._guessedLetters.has(char))
   }
 
   getAttemptsLeft() {
-    return this.attemptsLeft
+    return this._attemptsLeft
   }
 
   getWord() {
-    return this.word
-  }
-
-  isWordGuessed() {
-    return [...this.word].every((char) => this.guessedLetters.has(char))
+    return this._word
   }
 
   guessWord(word) {
     word = word.toLowerCase()
-    if (this.word === word) {
+    if (this._word === word) {
       for (const char of word) {
-        this.guessedLetters.add(char)
+        this._guessedLetters.add(char)
       }
     }
   }
 
-  setWordAndHint(word, hint) {
-    this.word = word.toLowerCase()
-    this.hint = hint
-    this.guessedLetters = new Set()
-    this.maxAttempts = 6
-    this.attemptsLeft = this.maxAttempts
+  set word(word) {
+    this._word = word.toLowerCase()
+  }
+
+  set hint(hint) {
+    this._hint = hint
   }
 }
 
 class Player {
   constructor(name) {
-    this.name = name
-    this.score = 0
+    this._name = name
+    this._score = 0
   }
 
   updateScore(points) {
-    this.score += points
+    this._score += points
   }
 
   resetScore() {
-    this.score = 0
+    this._score = 0
   }
 
-  getScore() {
-    return this.score
+  get score() {
+    return this._score
   }
 }
 
-class GameController {
-  constructor() {
-    this.player = null
-    this.match = null
-  }
-
-  startNewGame(word, hint, playerName) {
-    this.player = new Player(playerName)
-    this.match = new Match(word, hint)
-  }
-
-  askForWordAndHint() {
+class UserInterface {
+  static askQuestion(question) {
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
     })
 
-    rl.question('Digite a palavra para o jogo: ', (word) => {
-      rl.question('Digite a dica para a palavra: ', (hint) => {
-        this.startNewGame(word, hint, 'Jogador1')
+    return new Promise((resolve) => {
+      rl.question(question, (answer) => {
+        resolve(answer)
         rl.close()
-        this.displayGameStatus()
-        this.askForAction()
       })
     })
   }
 
+  static printGameStatus(match, player) {
+    console.log(`Palavra: ${match.displayProgress()}`)
+    console.log(`Dica: ${match._hint}`)
+    console.log(`Tentativas restantes: ${match.getAttemptsLeft()}`)
+    console.log(`Pontuação atual: ${player.score}`)
+  }
+}
+
+class GameController {
+  constructor() {
+    this._player = null
+    this._match = null
+  }
+
+  startNewGame(word, hint, playerName) {
+    this._player = new Player(playerName)
+    this._match = new Match(word, hint)
+  }
+
+  async askForWordAndHint() {
+    const word = await UserInterface.askQuestion(
+      'Digite a palavra para o jogo: '
+    )
+    const hint = await UserInterface.askQuestion(
+      'Digite a dica para a palavra: '
+    )
+    this.startNewGame(word, hint, 'Jogador1')
+    this.displayGameStatus()
+    this.askForAction()
+  }
+
   nextStep() {
-    if (!this.match.isGameOver()) {
+    if (!this._match.isGameOver()) {
       this.askForAction()
     } else {
-      const message = this.match.isWordGuessed()
+      const message = this._match.isWordGuessed()
         ? 'Você ganhou!'
         : 'Você perdeu!'
       console.log(`${message} Fim do jogo!`)
@@ -134,87 +146,59 @@ class GameController {
   }
 
   displayGameStatus() {
-    console.log(`Palavra: ${this.match.displayProgress()}`)
-    console.log(`Dica: ${this.match.hint}`)
-    console.log(`Tentativas restantes: ${this.match.getAttemptsLeft()}`)
-    console.log(`Pontuação atual: ${this.player.getScore()}`)
+    UserInterface.printGameStatus(this._match, this._player)
   }
 
   guessLetter(letter) {
-    this.match.guess(letter)
+    this._match.guess(letter)
     this.updateGame()
   }
 
   updateGame() {
-    if (this.match.isWordGuessed()) {
-      this.player.updateScore(10)
+    if (this._match.isWordGuessed()) {
+      this._player.updateScore(10)
       console.log('Parabéns, você acertou a palavra!')
       this.displayGameStatus()
-      if (!this.match.isGameOver()) {
-        this.askForAction()
-      } else {
-        const message = this.match.isWordGuessed()
-          ? 'Você ganhou!'
-          : 'Você perdeu!'
-        console.log(`${message} Fim do jogo!`)
-      }
-    } else if (this.match.getAttemptsLeft() === 0) {
-      console.log(`Você perdeu! A palavra era: ${this.match.getWord()}`)
+      this.nextStep()
+    } else if (this._match.getAttemptsLeft() === 0) {
+      console.log(`Você perdeu! A palavra era: ${this._match.getWord()}`)
       this.displayGameStatus()
-      if (!this.match.isGameOver()) {
-        this.askForAction()
-      } else {
-        const message = this.match.isWordGuessed()
-          ? 'Você ganhou!'
-          : 'Você perdeu!'
-        console.log(`${message} Fim do jogo!`)
-      }
+      this.nextStep()
     } else {
       this.displayGameStatus()
+      this.askForAction()
     }
   }
 
   guessWord(word) {
-    this.match.guessWord(word)
+    this._match.guessWord(word)
     this.updateGame()
   }
 
-  askForAction() {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    })
-
-    rl.question(
-      'Você quer chutar uma letra ou a palavra inteira? (l/p): ',
-      (choice) => {
-        if (choice.toLowerCase() === 'l') {
-          rl.question('Digite uma letra: ', (letter) => {
-            this.guessLetter(letter)
-            rl.close()
-            this.nextStep()
-          })
-        } else if (choice.toLowerCase() === 'p') {
-          rl.question('Digite a palavra: ', (word) => {
-            this.guessWord(word)
-            rl.close()
-            this.nextStep()
-          })
-        } else {
-          console.log(
-            'Escolha inválida. Por favor, escolha "l" para chutar uma letra ou "p" para chutar a palavra inteira.'
-          )
-          rl.close()
-          this.nextStep()
-        }
-      }
+  async askForAction() {
+    const choice = await UserInterface.askQuestion(
+      'Você quer chutar uma letra ou a palavra inteira? (l/p): '
     )
+    if (choice.toLowerCase() === 'l') {
+      const letter = await UserInterface.askQuestion('Digite uma letra: ')
+      this.guessLetter(letter)
+      this.nextStep()
+    } else if (choice.toLowerCase() === 'p') {
+      const word = await UserInterface.askQuestion('Digite a palavra: ')
+      this.guessWord(word)
+      this.nextStep()
+    } else {
+      console.log(
+        'Escolha inválida. Por favor, escolha "l" para chutar uma letra ou "p" para chutar a palavra inteira.'
+      )
+      this.nextStep()
+    }
   }
 }
 
-function playGame() {
+async function playGame() {
   const gameController = new GameController()
-  gameController.askForWordAndHint()
+  await gameController.askForWordAndHint()
 }
 
 // Iniciar o jogo
