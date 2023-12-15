@@ -111,7 +111,7 @@ class UserInterface {
     console.log(`Palavra: ${match.displayProgress()}`)
     console.log(`Dica: ${match._hint}`)
     console.log(`Tentativas restantes: ${match.getAttemptsLeft()}`)
-    console.log(`Letras já digitadas: ${match.getGuessedLetters()}`) // Adicione esta linha
+    console.log(`Letras já digitadas: ${match.getGuessedLetters()}`)
     console.log(`Pontuação atual: ${player.score}`)
   }
 }
@@ -133,7 +133,7 @@ class GameController {
     const hint = await UserInterface.askQuestion(
       'Digite a dica para a palavra: '
     )
-    console.clear() // Limpa o terminal
+    console.clear()
     this.startNewGame(word, hint)
     this.displayGameStatus()
     this.askForAction()
@@ -158,7 +158,7 @@ class GameController {
         ? 'Você ganhou!'
         : 'Você perdeu!'
       console.log(`${message} Fim do jogo!`)
-      this.restartGame() // Adicione esta linha
+      this.restartGame()
     }
   }
 
