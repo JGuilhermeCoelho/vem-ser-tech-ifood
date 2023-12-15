@@ -182,11 +182,9 @@ class GameController {
     if (choice.toLowerCase() === 'l') {
       const letter = await UserInterface.askQuestion('Digite uma letra: ')
       this.guessLetter(letter)
-      this.nextStep()
     } else if (choice.toLowerCase() === 'p') {
       const word = await UserInterface.askQuestion('Digite a palavra: ')
       this.guessWord(word)
-      this.nextStep()
     } else {
       console.log(
         'Escolha inválida. Por favor, escolha "l" para chutar uma letra ou "p" para chutar a palavra inteira.'
